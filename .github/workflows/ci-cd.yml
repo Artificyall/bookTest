@@ -32,7 +32,7 @@ jobs:
       run: ./gradlew test
 
     - name: Publish Test Results
-      uses: EnricoMi/publish-unit-test-result-action/macos@v2
+      uses: EnricoMi/publish-unit-test-result-action@v2
       if: always()
       with:
         github_token: ${{ secrets.PERSONAL_TOKEN }}

@@ -4,6 +4,7 @@ plugins {
     id("org.springframework.boot") version "3.5.3"
     id("io.spring.dependency-management") version "1.1.7"
     id("jacoco")
+    id("info.solidsoft.pitest") version "1.15.0"
 }
 
 group = "com.briendguyot"
@@ -52,4 +53,13 @@ tasks.test {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+pitest {
+    pitestVersion.set("1.15.0")
+    targetClasses.set(listOf("com.briendguyot.*")) // adapte selon ton code
+    targetTests.set(listOf("com.briendguyot.*")) // idem
+    threads.set(4)
+    outputFormats.set(listOf("HTML", "XML"))
+    junit5PluginVersion.set("1.2.0") // si tu utilises JUnit 5
 }

@@ -91,4 +91,18 @@ class LibraryConrollerITest(
 
         verify(exactly = 0) { libraryUseCase.addBook(any()) }
     }
+
+    "rest route reserve book" {
+        // GIVEN
+        val bookTitle = "1984"
+        justRun { libraryUseCase.reserveBook(bookTitle) }
+
+        // WHEN
+        mockMvc.post("/books/reserve") {
+            contentType = APPLICATION_JSON
+            content = "\"$bookTitle\""
+        }
+        // THEN
+        verify { libraryUseCase.reserveBook(bookTitle) }
+    }
 })

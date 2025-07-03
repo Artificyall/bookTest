@@ -32,17 +32,10 @@ class LibraryController(
     fun addBook(@RequestBody bookDTO: BookDTO) {
         libraryUseCase.addBook(bookDTO.toDomain())
     }
-    
     @CrossOrigin
-    @PostMapping("/{title}/reserve")
-    fun reserveBook(@PathVariable title: String): ResponseEntity<Unit> {
-        return try {
-            libraryUseCase.reserveBook(title)
-            ResponseEntity.ok().build()
-        } catch (e: IllegalArgumentException) {
-            ResponseEntity.notFound().build()
-        } catch (e: IllegalStateException) {
-            ResponseEntity.status(HttpStatus.CONFLICT).build()
-        }
+    @PostMapping("/reserve")
+    @ResponseStatus(HttpStatus.OK)
+    fun reserveBook(@RequestBody title: String) {
+        libraryUseCase.reserveBook(title)
     }
 }

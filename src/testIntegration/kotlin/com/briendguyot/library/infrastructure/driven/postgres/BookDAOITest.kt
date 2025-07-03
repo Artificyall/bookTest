@@ -75,6 +75,44 @@ class BookDAOITest(
             }
         }
 
+        "find book by title" {
+            // GIVEN
+            performQuery(
+                """
+               insert into book (title, author, reserved)
+               values ('1984', 'George Orwell', false);
+            """.trimIndent()
+            )
+
+            // WHEN
+            val book = bookDAO.findByTitle("1984")
+
+            // THEN
+            book.shouldNotBeNull()
+            book.title shouldBe "1984"
+            book.author shouldBe "George Orwell"
+            book.reserved shouldBe false
+        }
+
+        "update book reservation status" {
+            // GIVEN
+            performQuery(
+                """
+               insert into book (title, author, reserved)
+               values ('1984', 'George Orwell', false);
+            """.trimIndent()
+            )
+            val book = bookDAO.findByTitle("1984")!!.copy(reserved = true)
+
+            // WHEN
+            bookDAO.updateBook(book)
+
+            // THEN
+            val updated = bookDAO.findByTitle("1984")
+            updated.shouldNotBeNull()
+            updated.reserved shouldBe true
+        }
+
         afterSpec {
             container.stop()
         }

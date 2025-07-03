@@ -2,39 +2,45 @@ package com.briendguyot.library.domain.usecase
 
 import com.briendguyot.library.domain.model.Book
 import com.briendguyot.library.domain.port.BookRepositoryPort
-import io.kotest.core.spec.style.FunSpec
+import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.mockk.every
 import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.verify
 
-class LibraryUseCaseTest: FunSpec({
+class LibraryUseCaseTest : StringSpec({
   val bookRepository = mockk<BookRepositoryPort>()
   val libraryUseCase = LibraryUseCase(bookRepository)
 
-  test("getBooks returns sorted list of books") {
+  "getBooks returns sorted list of books" {
+    // Arrange
     val books = listOf(
-      Book("Le Petit Prince", "Antoine de Saint-Exupéry"),
+      Book("Les robots", "Isaac Asimov"),
       Book("Hypérion", "Dan Simons"),
       Book("Axiomatique", "Greg Egan")
     )
     every { bookRepository.getBooks() } returns books
 
-    val res = libraryUseCase.getBooks()
-    res shouldContainExactly listOf(
+    // Act
+    val result = libraryUseCase.getBooks()
+
+    // Assert
+    result shouldContainExactly listOf(
       Book("Axiomatique", "Greg Egan"),
       Book("Hypérion", "Dan Simons"),
-      Book("Le Petit Prince", "Antoine de Saint-Exupéry")
+      Book("Les robots", "Isaac Asimov")
     )
   }
 
-  test("addBook adds a book to the repository") {
-    val book = Book("Le Petit Prince", "Antoine de Saint-Exupéry")
+  "addBook adds a book to the repository" {
+    // Arrange
+    val book = Book("Les robots", "Isaac Asimov")
     justRun { bookRepository.addBook(any()) }
 
+    // Act
     libraryUseCase.addBook(book)
 
-    verify(exactly = 1) { bookRepository.addBook(book)}
-  }
-})
+    // Assert
+    verify(exactly = 1) { bookRepository.addBook(book) }
+  }})

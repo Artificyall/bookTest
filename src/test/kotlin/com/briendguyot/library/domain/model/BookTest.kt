@@ -1,14 +1,15 @@
 package com.briendguyot.library.domain.model
 
 import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.spec.style.FunSpec
+import io.kotest.core.spec.style.StringSpec
 
-class BookTest : FunSpec({
-    test("Name is mandatory") {
-        shouldThrow<IllegalArgumentException> { Book("", "Victor Hugo")}
+class BookTest : StringSpec({
+    "name is mandatory" {
+        shouldThrow<IllegalArgumentException> { Book("", "Victor Hugo") }
+
     }
 
-    test("Author is mandatory") {
-        shouldThrow<IllegalArgumentException> { Book("Le Petit Prince", "")}
+    "author is mandatory" {
+        shouldThrow<IllegalArgumentException> { Book("Les robots", "") }
     }
 })

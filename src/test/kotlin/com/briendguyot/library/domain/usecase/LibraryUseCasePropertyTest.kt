@@ -2,9 +2,8 @@ package com.briendguyot.library.domain.usecase
 
 import com.briendguyot.library.domain.model.Book
 import com.briendguyot.library.domain.port.BookRepositoryPort
-import io.kotest.core.spec.style.FunSpec
+import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactly
-import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.stringPattern
 import io.kotest.property.checkAll
@@ -18,22 +17,26 @@ class InMemoryBookRepositoryPort : BookRepositoryPort {
         books.add(book)
     }
 
-    fun clear() = books.clear()
+    fun clear() {
+        books.clear()
+    }
 }
 
-class LibraryUseCasePropertyTest: FunSpec({
+class LibraryUseCasePropertyTest : StringSpec({
 
     val bookRepository = InMemoryBookRepositoryPort()
     val libraryUseCase = LibraryUseCase(bookRepository)
 
-    test("Should return all elements in the alphabetical order") {
+    "should return all elements in the alphabetical order" {
         bookRepository.clear()
         val titles = mutableListOf<String>()
-        checkAll(Arb.stringPattern("""[a-z]{1,10}""")) { title ->
+        checkAll(Arb.stringPattern("""[A-Za-z]{1,10}""")) { title ->
             titles.add(title)
-            libraryUseCase.addBook(Book(title, "Author"))
+            libraryUseCase.addBook(Book(title, "Isaac Asimov"))
         }
+
         val res = libraryUseCase.getBooks()
         res.map { it.title } shouldContainExactly titles.sorted()
+
     }
 })

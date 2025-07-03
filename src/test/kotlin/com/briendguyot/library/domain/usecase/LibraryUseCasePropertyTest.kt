@@ -20,6 +20,14 @@ class InMemoryBookRepositoryPort : BookRepositoryPort {
     fun clear() {
         books.clear()
     }
+
+    override fun findByTitle(title: String): Book? =
+        books.find { it.title == title }
+
+    override fun updateBook(book: Book) {
+        books.removeIf { it.title == book.title }
+        books.add(book)
+    }
 }
 
 class LibraryUseCasePropertyTest : StringSpec({

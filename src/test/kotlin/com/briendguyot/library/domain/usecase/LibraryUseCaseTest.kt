@@ -2,6 +2,7 @@ package com.briendguyot.library.domain.usecase
 
 import com.briendguyot.library.domain.model.Book
 import com.briendguyot.library.domain.port.BookRepositoryPort
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.mockk.every
@@ -43,4 +44,33 @@ class LibraryUseCaseTest : StringSpec({
 
     // Assert
     verify(exactly = 1) { bookRepository.addBook(book) }
-  }})
+  }
+
+  "reserveBook reserves an available book" {
+    val book = Book("Dune", "Frank Herbert", reserved = false)
+    every { bookRepository.findByTitle("Dune") } returns book
+    justRun { bookRepository.updateBook(book.copy(reserved = true)) }
+
+    libraryUseCase.reserveBook("Dune")
+
+    verify(exactly = 1) { bookRepository.updateBook(book.copy(reserved = true)) }
+  }
+
+  "reserveBook throws if book is already reserved" {
+    val book = Book("Dune", "Frank Herbert", reserved = true)
+    every { bookRepository.findByTitle("Dune") } returns book
+
+    shouldThrow<IllegalStateException> {
+      libraryUseCase.reserveBook("Dune")
+    }
+  }
+
+  "reserveBook throws if book not found" {
+    every { bookRepository.findByTitle("Inconnu") } returns null
+
+    shouldThrow<IllegalArgumentException> {
+      libraryUseCase.reserveBook("Inconnu")
+    }
+  }
+
+})

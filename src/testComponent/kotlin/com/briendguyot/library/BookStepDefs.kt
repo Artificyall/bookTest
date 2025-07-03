@@ -69,4 +69,28 @@ class BookStepDefs {
     companion object {
         lateinit var lastBookResult: ValidatableResponse
     }
+
+    @When("the user reserves the book titled {string}")
+    fun reserveBook(title: String) {
+        lastBookResult = given()
+            .contentType(ContentType.JSON)
+            .`when`()
+            .post("/books/$title/reserve")
+            .then()
+    }
+
+    @Then("the user should see that the book titled {string} is reserved")
+    fun checkBookIsReserved(title: String) {
+        lastBookResult.statusCode(200)
+        val isReserved = lastBookResult.extract().jsonPath().getBoolean("reserved")
+        isReserved shouldBe true
+
+        val returnedTitle = lastBookResult.extract().jsonPath().getString("title")
+        returnedTitle shouldBe title
+    }
+
+    @Then("the request should fail with status {int}")
+    fun checkRequestFailedWithStatus(statusCode: Int) {
+        lastBookResult.statusCode(statusCode)
+    }
 }

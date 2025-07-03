@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PathVariable
 
 @RestController
 @RequestMapping("/books")
@@ -30,5 +32,17 @@ class LibraryController(
     fun addBook(@RequestBody bookDTO: BookDTO) {
         libraryUseCase.addBook(bookDTO.toDomain())
     }
-
+    
+    @CrossOrigin
+    @PostMapping("/{title}/reserve")
+    fun reserveBook(@PathVariable title: String): ResponseEntity<Unit> {
+        return try {
+            libraryUseCase.reserveBook(title)
+            ResponseEntity.ok().build()
+        } catch (e: IllegalArgumentException) {
+            ResponseEntity.notFound().build()
+        } catch (e: IllegalStateException) {
+            ResponseEntity.status(HttpStatus.CONFLICT).build()
+        }
+    }
 }
